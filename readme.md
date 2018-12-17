@@ -18,6 +18,11 @@ program test
   real :: coo(3,2) = reshape([0.,1.,1.,0.,0.,1.], shape=[3,2])
   real, allocatable :: detwei(:), rhs(:), drhs(:,:), &
                      & shape(:,:), dshape(:,:,:), nn(:,:), dnn(:,:,:)
+<<<<<<< HEAD
+=======
+  real :: vol
+  integer :: i,j
+>>>>>>> ed3ac3ebff4ee1d0b439ab94c8c2769e7e0fee1f
 
   call choose_element(ele, type='tri', degree = 1)
 
