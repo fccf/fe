@@ -26,6 +26,9 @@ module element_interface
 
     real, pointer :: qw(:)  => null() !< Quadrature weights. (nq)
     real, pointer :: qp(:,:)=> null() !< Quadrature points. (nq,nd)
+
+    real, allocatable :: detwei(:) !< det(jac)*qw (nq)
+    real, allocatable :: dshape(:,:,:) !< transformed dshape  (nd, nn, nq)
   contains
     !-----------------
     !> Constructors
@@ -54,6 +57,9 @@ module element_interface
     ! procedure :: get_nd
     ! procedure :: get_nn
     procedure :: info => element_information
+    procedure :: get_detwei => element_get_detwet
+    procedure :: get_shape  => element_get_shape
+    procedure :: get_dshape => element_get_dshape
 
 
     !---------------
@@ -137,30 +143,43 @@ contains
 
   end subroutine element_information
   !=============================================================================
-  subroutine element_to_physical(this, coo, detwei, dshape)
-    class(ele_t), intent(in) :: this
+  subroutine element_to_physical(this, coo)
+    class(ele_t), intent(inout) :: this
     real, intent(in) :: coo(:,:)  !< (nn, nd) element nodes coordinates
-    real, intent(out):: detwei(this%nq)
-    real, intent(out), optional :: dshape(this%nd, this%nn, this%nq ) !< (nd, nn, nq) transformed dshape
 
     real :: detJ
     real :: jac(this%nd, this%nd)
     integer :: iq
 
+    if(.not. allocated(this%detwei)) allocate(this%detwei(this%nq))
+    if(.not. allocated(this%dshape)) allocate(this%dshape(this%nd, this%nn, this%nq ))
     do iq = 1, this%nq
       jac = matmul(this%dn(:,:,iq),coo)
-
       detJ = det(jac)
-      detwei(iq) = abs(detJ)*this%qw(iq)
-
-      if(present(dshape)) then
-        call invert(jac)
-        dshape(:,:,iq) = matmul(jac, this%dn(:,:,iq))
-      endif
-
+      this%detwei(iq) = abs(detJ)*this%qw(iq)
+      call invert(jac)
+      this%dshape(:,:,iq) = matmul(jac, this%dn(:,:,iq))
     enddo
 
   end subroutine element_to_physical
+  !=============================================================================
+  pure function element_get_shape(this) result(shape)
+    class(ele_t), intent(in) :: this
+    real :: shape(this%nn, this%nq)
+    shape = this%n
+  end function element_get_shape
+  !=============================================================================
+  pure function element_get_detwet(this) result(detwei)
+    class(ele_t), intent(in) :: this
+    real :: detwei(this%nq)
+    detwei = this%detwei
+  end function element_get_detwet
+  !=============================================================================
+  pure function element_get_dshape(this) result(dshape)
+    class(ele_t), intent(in) :: this
+    real :: dshape(this%nd, this%nn, this%nq)
+    dshape = this%dshape
+  end function element_get_dshape
   !=============================================================================
   !!> Determinate of matrix
   function det(mat) result(det_out)
