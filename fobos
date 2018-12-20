@@ -1,0 +1,30 @@
+[modes]
+modes = gnu
+
+[common-variables]
+$CSTATIC_GNU = -cpp -c -std=f2008ts -ffree-line-length-none -fbacktrace  -fdefault-real-8 -fall-intrinsics
+$OPTIMIZE    = -O3
+
+# main modes
+[gnu]
+template  = template-static-gnu
+build_dir = app
+
+
+# templates
+[template-static-gnu]
+compiler        = gnu
+exclude_dirs    = $EXDIRS
+src             = src/
+cflags          = $CSTATIC_GNU $OPTIMIZE
+lflags          = $OPTIMIZE
+cflags_heritage = False
+colors          = True
+quiet           = False
+log             = False
+jobs            = 10
+preproc         =
+mpi             = True
+include         =
+libs            =
+ext_libs        =
