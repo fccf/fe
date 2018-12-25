@@ -9,9 +9,14 @@ program fc_debug_test
   debug_info(-1, '(a)') 'this is an level -1 information.'
   debug_info(1,'(a)') 'this is an level 1 information.'
 
+  !> true
   assert_equal(1.0,1.0)
-  assert_true(1.0==1.0)
-  assert(1.0==1.0)
+  !> false
+  assert_true(1==2)
+
+  print*, assert_info()
+
+  assert(1==1)
   error('print an error.')
 
 end program fc_debug_test
