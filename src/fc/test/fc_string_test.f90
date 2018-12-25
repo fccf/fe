@@ -1,68 +1,33 @@
+
+#include "fc_debug.h"
 program fc_string_test
   use fc_string
+  use fc_debug
   implicit none
 
   character(:), allocatable :: s_lower, s_upper, s_file
-  logical, allocatable :: passed(:)
-  logical :: pass
-
-
-  passed = [logical ::]
 
   s_lower = 'hello world!'
   s_upper = 'HELLO WORLD!'
   s_file  = '/root/fc/fc.f90'
 
+  assert_true(lower(s_upper)==s_lower)
+  assert_true(upper(s_lower)==s_upper)
+  assert_true(all(is_logical(['true ', 'false', 'no   ', 'yes  ', 'T    ', 'N    '])))
+  assert_true(all(is_int(['1234', '10  ', '0058'])))
+  assert_true(all(is_real(['1234', '3.14', '5.0 ',' 12 '])))
+  assert_true(to_logical('true'))
+  assert_true(to_int('123') == 123)
+  assert_equal(to_real('3.14'), 3.14)
+  assert_true(file_dir(s_file)=='/root/fc')
+  assert_true(file_name(s_file)=='fc.f90')
+  assert_true(file_base(s_file)=='fc')
+  assert_true(file_ext(s_file)=='f90')
+  assert_true(start_with('start_with', 'art'))
+  assert_true(end_with('end_with', 'wi'))
 
-  pass = lower(s_upper)==s_lower; passed = [passed, pass]
-  print*, '>> lower:', pass
+  write(*, '(a)') assert_info()
 
-  pass = lower(s_upper)==s_lower; passed = [passed, pass]
-  print*, '>> upper:', pass
-
-  pass = all(is_logical(['true ', 'false', 'no   ', 'yes  ', 'T    ', 'N    ']))
-  passed = [passed, pass]
-  print*, ">> is_logical:", pass
-
-  pass = all(is_int(['1234', '10  ', '0058']))
-  passed = [passed, pass]
-  print*, ">> is_int:", pass
-
-  pass = all(is_real(['1234', '3.14', '5.0 ',' 12 ']))
-  passed = [passed, pass]
-  print*, ">> is_real:", pass
-
-  pass = to_logical('true')
-  passed = [passed, pass]
-  print*, ">> to_logical:", pass
-
-  pass = to_int('123') == 123
-  passed = [passed, pass]
-  print*, ">> to_int:", pass
-
-  pass = to_real('3.14') == 3.14
-  passed = [passed, pass]
-  print*, ">> to_real:", pass
-
-  pass = file_dir(s_file)=='/root/fc'; passed = [passed, pass]
-  print*, ">> file_dir:", pass
-
-  pass = file_name(s_file)=='fc.f90'; passed = [passed, pass]
-  print*, ">> file_name:", pass
-
-  pass = file_base(s_file)=='fc'; passed = [passed, pass]
-  print*, ">> file_base:", pass
-
-  pass = file_ext(s_file)=='f90'; passed = [passed, pass]
-  print*, ">> file_ext:", pass
-
-  pass = start_with('start_with', 'start'); passed = [passed, pass]
-  print*, ">> start_with", pass
-
-  pass = end_with('end_with', 'with'); passed = [passed, pass]
-  print*, ">> end_with", pass
-
-  print*, "all passed?", all(passed)
 
   print*, 'to_str(s) = '//to_str(3.1415)
   print*, 'to_str(v) = '//to_str([1,2,3,4,5], vsep=',', shell=.TRUE.)
@@ -72,7 +37,7 @@ program fc_string_test
 
  block
    character(:), allocatable :: file_string, filename, line
-   integer :: unit, ios, n
+   integer :: unit
 
    filename = 'test_read_file.txt'
    file_string = file_content(filename)
@@ -84,10 +49,7 @@ program fc_string_test
    print*, 'line>>1:'//line
    line = next_line_content(unit)
    print*, 'line>>2:'//line
-
    close(unit)
-
-
 
  end block
 
