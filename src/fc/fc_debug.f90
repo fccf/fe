@@ -14,8 +14,8 @@ module fc_debug
 
   integer, save :: debug_level_  = 1
   real, save    :: default_tolerance = 1.0e-6
-  logical, allocatable      :: passed(:)
-  character(:), allocatable :: fail_msg
+  logical, allocatable, save      :: passed(:)
+  character(:), allocatable, save :: fail_msg
 
 contains
   !=============================================================================
@@ -105,7 +105,7 @@ contains
       assert_info =assert_info//'All passed.'
     else
       assert_info = assert_info//to_str(size(passed)-count(passed))//&
-                  & ' not passed. '//fail_msg
+                  & ' not passed. '//new_line('a')//fail_msg
     endif
 
   end function assert_info
