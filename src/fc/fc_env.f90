@@ -1,7 +1,8 @@
 module fc_env
   !< fortran common environment parameter
   use iso_fortran_env, &
-  only: int32, int64, real32, real64, input_unit, output_unit, error_unit
+  only: int32, int64, real32, real64, input_unit, output_unit, error_unit, &
+      & compiler_version, compiler_options
   implicit none
 
   integer, parameter :: i4p = int32
