@@ -12,6 +12,6 @@ program fc_file_test
   assert_true(file_base(s_file)=='fc')
   assert_true(file_ext(s_file)=='f90')
 
-  write(*, '(a)') assert_info()
-  
+  call print_assert_summary
+
 end program fc_file_test

@@ -14,7 +14,7 @@ program fc_debug_test
   !> false
   assert_true(1==2)
 
-  print*, assert_info()
+  call print_assert_summary
 
   assert(1==1)
   error('print an error.')

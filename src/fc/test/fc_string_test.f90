@@ -18,6 +18,6 @@ program fc_string_test
   assert_true(to_str([1,2,3])=='[1,2,3]')
   assert_true(to_str(reshape([1,2,3,4],[2,2]))=='[[1,2];[3,4]]')
 
-  write(*, '(a)') assert_info()
+  call print_assert_summary
 
 end program fc_string_test

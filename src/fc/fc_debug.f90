@@ -2,18 +2,20 @@ module fc_debug
   use iso_fortran_env, only: error_unit, output_unit, &
                            & compiler_version, compiler_options
   use fc_string
+  use fc_color
   implicit none
 
   public :: set_debug_level, debug_unit, debug_error, debug_level_
   public :: debug_assert_true, debug_assert_equal
-  public :: set_asser_tolerance
-  public :: assert_info, assert_clear
+  public :: set_asser_tolerance, set_is_loc_color
+  public :: print_assert_summary, assert_clear
   public :: compile_info
 
   private
 
-  integer, save :: debug_level_  = 1
+  integer, save :: debug_level_      = 1
   real, save    :: default_tolerance = 1.0e-6
+  logical, save :: is_loc_color      = .TRUE.
   logical, allocatable, save      :: passed(:)
   character(:), allocatable, save :: fail_msg
 
@@ -47,8 +49,14 @@ contains
     character(:), allocatable :: loc
 
     loc = '('//file//', '//to_str(line)//' )'
+    if(is_loc_color) loc = colorize(loc, 'red')
 
   end function debug_location
+  !=============================================================================
+  subroutine set_is_loc_color(this)
+    logical, intent(in) :: this
+    is_loc_color = this
+  end subroutine set_is_loc_color
   !=============================================================================
   subroutine debug_error(msg, file, line)
     !< print error message, contains which file and line
@@ -97,18 +105,15 @@ contains
     default_tolerance = tol
   end subroutine set_asser_tolerance
   !=============================================================================
-  function assert_info()
-    !< assert information string
-    character(:), allocatable :: assert_info
-    assert_info = "Total assertation number is "//to_str(size(passed))//', '
+  subroutine print_assert_summary
+    write(*,*) "Total assertation number is "//to_str(size(passed))
     if(all(passed)) then
-      assert_info =assert_info//'All passed.'
+      write(*,*) 'All passed.'
     else
-      assert_info = assert_info//to_str(size(passed)-count(passed))//&
-                  & ' not passed. '//new_line('a')//fail_msg
+      write(*,*) to_str(size(passed)-count(passed))//' not passed. '
+      write(*,*) fail_msg
     endif
-
-  end function assert_info
+  end subroutine print_assert_summary
   !=============================================================================
   subroutine assert_clear()
     !< clear current assertation
