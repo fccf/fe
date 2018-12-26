@@ -1,0 +1,10 @@
+"timer_report":{
+  "time":1,
+  "ncall":1,
+  "persent":1,
+  "average":1,
+  "level1":{
+    "time":1,
+    "ncall":2,
+  }
+}
