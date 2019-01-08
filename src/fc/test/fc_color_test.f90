@@ -22,9 +22,9 @@ program fc_clolor_test
   print*, colorize('cyan','cyan')
   print*, colorize('purple','purple')
 
-  do i = 0,20
-    print*, colorize('corlormap',color_map(v=0.05*i,r=[0.,1.]))
+  do i = 0,100
+    write(*,fmt='(a)',advance='no') colorize('=',color_map(v=0.01*i,r=[0.,1.]))
   enddo
-
+  write(*,*)
 
 end program fc_clolor_test
